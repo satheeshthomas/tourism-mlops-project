@@ -8,7 +8,7 @@ api  = HfApi(token=os.environ.get("HF_TOKEN"))
 REPO = "SatheeshThomas/tourism-dataset_1"
 
 df = pd.read_csv("tourism_project_1/data/tourism.csv")
-print(f"Loaded: {df.shape}") 
+print(f"Loaded: {df.shape}")
 
 # FIX: drop Unnamed:0 if source CSV was saved with index
 if "Unnamed: 0" in df.columns:
