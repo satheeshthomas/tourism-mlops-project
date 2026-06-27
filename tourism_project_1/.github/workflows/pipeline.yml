@@ -1,0 +1,53 @@
+name: Tourism MLOps Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  data-registration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r tourism_project_1/requirements.txt
+      - name: Register Dataset on HF Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python tourism_project_1/model_building/data_register.py
+
+  data-preparation:
+    needs: data-registration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r tourism_project_1/requirements.txt
+      - name: Clean Encode and Upload Splits
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python tourism_project_1/model_building/prep.py
+
+  model-training:
+    needs: data-preparation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r tourism_project_1/requirements.txt
+      - name: Train Model and Register on HF Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python tourism_project_1/model_building/train.py
+
+  model-deployment:
+    needs: model-training
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r tourism_project_1/requirements.txt
+      - name: Deploy to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python tourism_project_1/hosting/hosting.py
