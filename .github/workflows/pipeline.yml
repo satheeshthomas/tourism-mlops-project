@@ -1,5 +1,4 @@
 name: Tourism MLOps Pipeline
-
 on:
   push:
     branches: [main]
